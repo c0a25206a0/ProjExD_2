@@ -67,6 +67,7 @@ def main():
         (-5, +5): pg.transform.flip(pg.transform.rotozoom(kk_img_0, -45, 0.9), True, False), # 左下
     }
 
+
     kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
 
     kk_img = kk_imgs[(0, 0)] 
