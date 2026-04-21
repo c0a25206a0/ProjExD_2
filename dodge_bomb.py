@@ -1,6 +1,8 @@
 import os
 import sys
+import random
 import pygame as pg
+
 
 
 WIDTH, HEIGHT = 1100, 650
@@ -16,7 +18,6 @@ DELTA = {
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -25,11 +26,15 @@ def main():
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
 
-    bb_img = pg.Surface((20, 20))
-    pg.draw.circle(bb_img, (255, 0, 0), (10, 10), 10)
-    bb_img.set_colorkey((0, 0, 0,))
-    bb_rct = bb_img.get_rect()
-    bb_rct.center = 500, 300
+    bb_img = pg.Surface((20, 20)) #爆弾用の空のSurfaceを作成
+    pg.draw.circle(bb_img, (255, 0, 0), (10, 10), 10) #爆弾円を描く
+    bb_img.set_colorkey((0, 0, 0,)) #円の周りの黒い領域を透明化
+
+    bb_rct = bb_img.get_rect() #爆弾rectを作る
+    bb_rct.centerx = random.randint(0,WIDTH) #爆弾の初期横座標を設定
+    bb_rct.centery = random.randint(0, HEIGHT)#爆弾の初期縦座標を設定 
+
+    vx, vy = +5, +5
     
     clock = pg.time.Clock()
     tmr = 0
@@ -52,6 +57,11 @@ def main():
         kk_rct.move_ip(idou[0], idou[1])
         
         screen.blit(kk_img, kk_rct)
+
+        bb_rct.move_ip(vx, vy)
+
+        screen.blit(bb_img, bb_rct) #爆弾を表示
+
         pg.display.update()
         tmr += 1
         clock.tick(50)
