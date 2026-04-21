@@ -10,21 +10,27 @@ DELTA = {pg.K_UP: (0, -5), pg.K_DOWN: (0, +5), pg.K_LEFT: (-5, 0), pg.K_RIGHT: (
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 def check_bound(rct: pg.Rect) -> tuple[bool, bool]:
+
     """
     引数で与えられたRectが画面内外であるかを判定する関数
     戻り値：横方向、縦方向（画面内ならTrue、画面外ならFalse）
     """
+
     yoko, tate = True, True
+
     if rct.left < 0 or WIDTH < rct.right:
         yoko = False
     if rct.top < 0 or HEIGHT < rct.bottom:
         tate = False
     return yoko, tate
 
+
 def gameover(screen: pg.Surface) -> None:
+
     """
     ゲームオーバー画面を表示する関数
     """
+    
     bb_gmov = pg.Surface((WIDTH, HEIGHT))
     pg.draw.rect(bb_gmov, (0, 0, 0), (0, 0, WIDTH, HEIGHT))
     bb_gmov.set_alpha(200) 
@@ -45,11 +51,14 @@ def gameover(screen: pg.Surface) -> None:
     pg.display.update()
     time.sleep(5)
 
+
 def calc_orientation(org: pg.Rect, dst: pg.Rect, current_xy: tuple[float, float]) -> tuple[float, float]:
+
     """
     org(爆弾)からdst(こうかとん)へ向かう速度ベクトルを計算する関数
     引数 current_xy: 現在の速度(vx, vy)
     """
+    
     diff_x = dst.centerx - org.centerx
     diff_y = dst.centery - org.centery
     
@@ -65,6 +74,7 @@ def calc_orientation(org: pg.Rect, dst: pg.Rect, current_xy: tuple[float, float]
         return new_vx, new_vy
     
     return current_xy
+
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
@@ -89,11 +99,12 @@ def main():
         (-5, +5): pg.transform.flip(pg.transform.rotozoom(kk_img_0, -45, 0.9), True, False), # 左下
     }
 
+
     kk_img = kk_imgs[(0, 0)] 
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
 
-    # --- 爆弾の拡大・加速用のリスト作成 ---
+    # 爆弾の拡大・加速用のリスト作成
     bb_imgs = []
     bb_accs = [a for a in range(1, 11)]
     for r in range(1, 11):
@@ -115,15 +126,15 @@ def main():
         for event in pg.event.get():
             if event.type == pg.QUIT: return
         
-        # --- 当たり判定 ---
+        # 当たり判定
         if kk_rct.colliderect(bb_rct):
             gameover(screen)
             return
 
-        # 1. 背景の描画
+        # 背景の描画
         screen.blit(bg_img, [0, 0]) 
 
-        # 2. こうかとんの移動と画像切り替え
+        # こうかとんの移動と画像切り替え
         key_lst = pg.key.get_pressed()
         idou = [0, 0]
         for key, move in DELTA.items():
@@ -140,7 +151,7 @@ def main():
             
         screen.blit(kk_img, kk_rct)
 
-        # 3. 爆弾の拡大・加速と周期的な追従
+        # 爆弾の拡大・加速と周期的な追従
         idx = min(tmr // 500, 9) # 10秒(500フレーム)ごとに段階アップ
         curr_bb_img = bb_imgs[idx]
         
