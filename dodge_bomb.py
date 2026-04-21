@@ -35,7 +35,27 @@ def main():
     bb_rct.centery = random.randint(0, HEIGHT)#爆弾の初期縦座標を設定 
 
     vx, vy = +5, +5
-    
+
+    def check_bound(rct: pg.Rect) -> tuple[bool, bool]:
+
+        """
+        
+        引数で与えられたRectが画面内外であるかを判定する関数
+        引数：こうかとんRectか爆弾Rect
+        戻り値：横方向、縦方向
+        画面内ならTrue、画面外ならFalse
+
+        """
+
+        width, height = True, True
+
+        if rct.left < 0 or WIDTH < rct.right:
+            width = False
+        if rct.top < 0 or HEIGHT < rct.bottom:
+            height = False
+        
+        return width, height
+
     clock = pg.time.Clock()
     tmr = 0
     
@@ -55,11 +75,21 @@ def main():
                 idou[1] += move[1]
 
         kk_rct.move_ip(idou[0], idou[1])
-        
-        screen.blit(kk_img, kk_rct)
 
+        if check_bound(kk_rct) != (True, True): #画面外なら
+            kk_rct.move_ip(-idou[0], -idou[1])
+        
+        
+
+        screen.blit(kk_img, kk_rct)
         bb_rct.move_ip(vx, vy)
 
+        width, height = check_bound(bb_rct)
+        if not width:
+            vx *= -1
+        if not height:
+            vy *= -1
+            
         screen.blit(bb_img, bb_rct) #爆弾を表示
 
         pg.display.update()
