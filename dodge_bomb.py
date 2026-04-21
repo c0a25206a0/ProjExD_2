@@ -63,6 +63,11 @@ def main():
         for event in pg.event.get():
             if event.type == pg.QUIT: 
                 return
+            
+
+        if kk_rct.colliderect(bb_rct):
+            return
+        
         screen.blit(bg_img, [0, 0]) 
 
         key_lst = pg.key.get_pressed()
@@ -79,8 +84,6 @@ def main():
         if check_bound(kk_rct) != (True, True): #画面外なら
             kk_rct.move_ip(-idou[0], -idou[1])
         
-        
-
         screen.blit(kk_img, kk_rct)
         bb_rct.move_ip(vx, vy)
 
@@ -89,7 +92,7 @@ def main():
             vx *= -1
         if not height:
             vy *= -1
-            
+
         screen.blit(bb_img, bb_rct) #爆弾を表示
 
         pg.display.update()
