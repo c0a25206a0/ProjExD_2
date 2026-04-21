@@ -1,6 +1,7 @@
 import os
 import sys
 import random
+import time
 import pygame as pg
 
 
@@ -55,6 +56,37 @@ def main():
             height = False
         
         return width, height
+    
+    #ゲームオーバー画面の処理
+
+    def gameover(screen: pg.Surface) -> None:
+        # 1. 黒い矩形を描画するための空のSurfaceを作り，黒い矩形を描画する
+        bb_gmov = pg.Surface((WIDTH, HEIGHT))
+        pg.draw.rect(bb_gmov, (0, 0, 0), (0, 0, WIDTH, HEIGHT))
+
+        # 2. 1のSurfaceの透明度を設定する
+        bb_gmov.set_alpha(200) 
+
+        # 3. 白文字でGame Overと書かれたフォントSurfaceを作り，1のSurfaceにblitする
+        fonto = pg.font.Font(None, 80)
+        txt = fonto.render("GAME OVER", True, (255, 255, 255))
+        txt_rect = txt.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+        bb_gmov.blit(txt, txt_rect) # txtをblitし忘れていたのを修正
+
+        # 4. こうかとん画像をロードし，こうかとんSurfaceを作り，1のSurfaceにblitする
+        kk_gameover_img = pg.image.load("fig/8.png") 
+        kk_gameover_rct1 = kk_gameover_img.get_rect(center=(WIDTH // 2 - 200, HEIGHT // 2))
+        kk_gameover_rct2 = kk_gameover_img.get_rect(center=(WIDTH // 2 + 200, HEIGHT // 2))
+
+        bb_gmov.blit(kk_gameover_img, kk_gameover_rct1)
+        bb_gmov.blit(kk_gameover_img, kk_gameover_rct2) 
+
+        # 5. 1のSurfaceをscreen Surfaceにblitする
+        screen.blit(bb_gmov, [0, 0])
+
+        # 6. pg.display.update()したら，time.sleep(5)する
+        pg.display.update()
+        time.sleep(5)
 
     clock = pg.time.Clock()
     tmr = 0
@@ -65,8 +97,9 @@ def main():
                 return
             
 
-        if kk_rct.colliderect(bb_rct):
-            return
+        if kk_rct.colliderect(bb_rct): #こうかとんと爆弾の衝突
+            gameover(screen)
+            return #当たった時のゲームを終わらせる処理
         
         screen.blit(bg_img, [0, 0]) 
 
